@@ -2,11 +2,10 @@ package main
 
 import (
 	"bufio"
-	"crypto/rand"
 	"flag"
 	"fmt"
 	"io"
-	"math/big"
+	"math/rand"
 	. "os"
 )
 
@@ -63,17 +62,16 @@ func main() {
 			out[position] = line
 
 		} else {
-			r, err := rand.Int(rand.Reader, big.NewInt(position))
+			r := rand.Int63n(position)
 
 			if err != nil {
 				panic(err)
 			}
 
-			if r.Int64() < int64(sampleSize) {
-				out[r.Int64()] = line
+			if r < int64(sampleSize) {
+				out[r] = line
 			}
 		}
-
 		position = position + 1
 	}
 
