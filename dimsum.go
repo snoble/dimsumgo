@@ -35,15 +35,15 @@ func main() {
 	var err error
 	var inputName string
 	var sampleSize int
-	var position = 0
+	var position int64
+	position = 0
 	inputLines := make(chan []byte)
 
 	flag.StringVar(&inputName, "input", "", "input file name")
 	flag.IntVar(&sampleSize, "samplesize", 1, "how many lines to sample")
 	flag.Parse()
 
-	bigSampleSize := big.NewInt(int64(sampleSize))
-	out := make([][]byte, bigSampleSize.Int64())
+	out := make([][]byte, sampleSize)
 
 	if inputName == "" {
 		input = Stdin
@@ -59,17 +59,17 @@ func main() {
 
 	for line := range inputLines {
 
-		if int64(position) < bigSampleSize.Int64() {
+		if position < int64(sampleSize) {
 			out[position] = line
 
 		} else {
-			r, err := rand.Int(rand.Reader, bigSampleSize)
+			r, err := rand.Int(rand.Reader, big.NewInt(position))
 
 			if err != nil {
 				panic(err)
 			}
 
-			if r.Int64() < bigSampleSize.Int64() {
+			if r.Int64() < int64(sampleSize) {
 				out[r.Int64()] = line
 			}
 		}
