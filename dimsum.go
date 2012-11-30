@@ -2,14 +2,13 @@ package main
 
 import (
 	"bufio"
+	cryptorand "crypto/rand"
 	"flag"
 	"fmt"
 	"io"
 	"math/rand"
 	. "os"
 )
-
-import cryptorand "crypto/rand"
 
 func readInput(f *File, c chan []byte) {
 	reader := bufio.NewReader(f)
