@@ -68,7 +68,7 @@ func main() {
 			out[position] = line
 
 		} else {
-			r := rand.Int63n(position)
+			r := rand.Int63n(position + 1)
 
 			if err != nil {
 				panic(err)
