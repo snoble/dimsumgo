@@ -9,6 +9,8 @@ import (
 	. "os"
 )
 
+import cryptorand "crypto/rand"
+
 func readInput(f *File, c chan []byte) {
 	reader := bufio.NewReader(f)
 
@@ -37,6 +39,10 @@ func main() {
 	var position int64
 	position = 0
 	inputLines := make(chan []byte)
+
+	seed := make([]byte, 1)
+	io.ReadFull(cryptorand.Reader, seed)
+	rand.Seed(int64(seed[0]))
 
 	flag.StringVar(&inputName, "input", "", "input file name")
 	flag.IntVar(&sampleSize, "samplesize", 1, "how many lines to sample")
