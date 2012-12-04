@@ -37,7 +37,7 @@ func main() {
 	var sampleSize int
 	var position int64
 	position = 0
-	inputLines := make(chan []byte)
+	inputLines := make(chan []byte, 100)
 
 	seed := make([]byte, 1)
 	io.ReadFull(cryptorand.Reader, seed)
