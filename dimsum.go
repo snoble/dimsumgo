@@ -35,12 +35,11 @@ func readInput(f *File, c chan []byte) {
 func main() {
 	var input *File
 	var err error
-	var inputName string
 	var sampleSize int
 	var position int64
+
 	position = 0
 	inputLines := make(chan []byte, 100)
-
 	seed := make([]byte, 1)
 
 	signals := make(chan Signal, 1)
@@ -49,11 +48,12 @@ func main() {
 	io.ReadFull(cryptorand.Reader, seed)
 	rand.Seed(int64(seed[0]))
 
-	flag.StringVar(&inputName, "input", "", "input file name")
-	flag.IntVar(&sampleSize, "samplesize", 1, "how many lines to sample")
+	flag.IntVar(&sampleSize, "n", 1, "how many lines to sample")
 	flag.Parse()
 
-	out := make([][]byte, sampleSize)
+	inputName := flag.Arg(0)
+
+	out := make([][]byte, sampleSize, sampleSize)
 
 	if inputName == "" {
 		input = Stdin
