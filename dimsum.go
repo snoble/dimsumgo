@@ -48,7 +48,7 @@ func main() {
 	io.ReadFull(cryptorand.Reader, seed)
 	rand.Seed(int64(seed[0]))
 
-	flag.IntVar(&sampleSize, "n", 1, "how many lines to sample")
+	flag.IntVar(&sampleSize, "n", 5, "how many lines to sample")
 	flag.Parse()
 
 	inputName := flag.Arg(0)
@@ -69,9 +69,9 @@ func main() {
 
 	go readInput(input, inputLines)
 
-	for line := range inputLines {
+	bail := false
 
-		bail := false
+	for line := range inputLines {
 
 		select {
 		case foo := <-signals:
