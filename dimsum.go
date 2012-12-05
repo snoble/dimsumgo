@@ -8,6 +8,8 @@ import (
 	"io"
 	"math/rand"
 	. "os"
+	"os/signal"
+	"syscall"
 )
 
 func readInput(f *File, c chan []byte) {
@@ -33,21 +35,25 @@ func readInput(f *File, c chan []byte) {
 func main() {
 	var input *File
 	var err error
-	var inputName string
 	var sampleSize int
 	var position int64
+
 	position = 0
 	inputLines := make(chan []byte, 100)
-
 	seed := make([]byte, 1)
+
+	signals := make(chan Signal, 1)
+	signal.Notify(signals, syscall.SIGINT)
+
 	io.ReadFull(cryptorand.Reader, seed)
 	rand.Seed(int64(seed[0]))
 
-	flag.StringVar(&inputName, "input", "", "input file name")
-	flag.IntVar(&sampleSize, "samplesize", 1, "how many lines to sample")
+	flag.IntVar(&sampleSize, "n", 5, "how many lines to sample")
 	flag.Parse()
 
-	out := make([][]byte, sampleSize)
+	inputName := flag.Arg(0)
+
+	out := make([][]byte, sampleSize, sampleSize)
 
 	if inputName == "" {
 		input = Stdin
@@ -59,9 +65,20 @@ func main() {
 		}
 	}
 
+	defer input.Close()
+
 	go readInput(input, inputLines)
 
+	bail := false
+
 	for line := range inputLines {
+
+		select {
+		case foo := <-signals:
+			bail = true
+			fmt.Printf("%v", foo)
+		default:
+		}
 
 		if position < int64(sampleSize) {
 			out[position] = line
@@ -77,11 +94,15 @@ func main() {
 				out[r] = line
 			}
 		}
+
+		if bail {
+			break
+		}
+
 		position = position + 1
 	}
 
 	for _, line := range out {
 		fmt.Printf("%s", line)
 	}
-	// CLose input
 }
